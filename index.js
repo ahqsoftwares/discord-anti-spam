@@ -331,7 +331,7 @@ class AntiSpamClient extends EventEmitter {
 			if (this.options.modLogsEnabled) {
 				this.log(message, `banned`, message.client)
 			}
-			this.emit('banAdd', member)
+			this.emit('banAdd', member, message.guild)
 			return true
 		}
 	}
@@ -379,7 +379,6 @@ class AntiSpamClient extends EventEmitter {
 			this.log(message, `muted`, message.client)
 		}
 		this.emit('muteAdd', member, message.guild)
-		this.timeMute(member, message, role)
 		return true
 	}
 
@@ -421,7 +420,7 @@ class AntiSpamClient extends EventEmitter {
 			if (this.options.modLogsEnabled) {
 				this.log(message, `kicked`, message.client)
 			}
-			this.emit('kickAdd', member)
+			this.emit('kickAdd', member, message.guild)
 			return true
 		}
 	}
@@ -447,7 +446,7 @@ class AntiSpamClient extends EventEmitter {
 				}
 			})
 		}
-		this.emit('warnAdd', member)
+		this.emit('warnAdd', member, message.guild)
 		return true
 	}
 
@@ -588,23 +587,6 @@ class AntiSpamClient extends EventEmitter {
 	 * @param {Discord.GuildMember} member The member to the role from
 	 * @returns {Promise<boolean>} Whether the role has been removed
 	 */
-	async timeMute(member, message, role) {
-		const minutestime = this.options.unMuteTime * 60 * 1000
-		if(minutestime != 0) {
-			setTimeout(() => {
-				member.roles.remove(role)
-				this.cache.mutedUsers = this.cache.mutedUsers.filter((u) => u !== member.user.id)
-				if (this.options.modLogsEnabled) {
-					this.log(message, `unmutted`, message.client)
-				}
-				this.emit('muteRemove', member)
-				return true
-				}, minutestime)
-			
-		}else {
-			return null;
-		}
-	}
 
 	/**
 	 * Reset the cache of this AntiSpam client instance.
