@@ -350,7 +350,7 @@ class AntiSpamClient extends EventEmitter {
 		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
 		this.cache.mutedUsers.push(message.author.id)
-		const userCanBeMuted = role && message.guild.me.permissions.has('MODERATE_MEMBERS') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
+		const userCanBeMuted = message.guild.me.permissions.has('MODERATE_MEMBERS') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
 				console.log(`${message.author.tag} (ID: ${message.author.id}) could not be muted, improper permissions or the mute role couldn't be found.`)
@@ -366,7 +366,6 @@ class AntiSpamClient extends EventEmitter {
 			}
 			return false
 		}
-		if (message.member.roles.cache.has(role.id)) return true
 		await message.member.timeout(5 * 60 * 1000, "Spamming")
 		if (this.options.muteMessage) {
 			await message.channel.send(this.format(this.options.muteMessage, message)).catch(e => {
