@@ -349,7 +349,6 @@ class AntiSpamClient extends EventEmitter {
 			this.clearSpamMessages(spamMessages, message.client)
 		}
 		this.cache.messages = this.cache.messages.filter((u) => u.authorID !== message.author.id)
-		this.cache.mutedUsers.push(message.author.id)
 		const userCanBeMuted = message.guild.me.permissions.has('MODERATE_MEMBERS') && (message.guild.me.roles.highest.position > message.member.roles.highest.position)
 		if (!userCanBeMuted) {
 			if (this.options.verbose) {
@@ -365,6 +364,8 @@ class AntiSpamClient extends EventEmitter {
 					})
 			}
 			return false
+		} else {
+				this.cache.mutedUsers.push(message.author.id)
 		}
 		await message.member.timeout(5 * 60 * 1000, "Spamming")
 		if (this.options.muteMessage) {
